@@ -1,0 +1,6 @@
+name = Email Club Registration
+description = "Displays a test message when a Rules action is triggered"
+package = Koumbit
+core = 7.x
+files[] = email_club_registration.module
+files[] = email_club_registration.rules.inc
