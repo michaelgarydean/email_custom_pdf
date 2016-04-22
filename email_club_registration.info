@@ -4,3 +4,4 @@ package = Koumbit
 core = 7.x
 files[] = email_club_registration.module
 files[] = email_club_registration.rules.inc
+dependencies[] = rules

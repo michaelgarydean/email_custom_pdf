@@ -1,19 +1,4 @@
         <?php
-        /**
-        * @file
-        * Show a message to verify the function is called.
-        */
-        
-        function email_club_registration_show_message() {
-            drupal_set_message( t('Test 1 2.'), 'status' );
-        }
-        
-        /**
-        * Display a message to the user.
-        */     
-        function email_club_registration_message_action() {
-            email_club_registration_show_message();
-        }
         
         /**
         * Sends an email to the user
@@ -21,6 +6,7 @@
         function email_club_registration_email_action() {
             global $user;
             
+            $from = 'mike@koumbit.org';
             $to = $user->mail;
             $language = user_preferred_language($user);
             $params = array(
@@ -28,9 +14,7 @@
                 
             );
             
-            echo 'here';
-            die();
-            drupal_mail( 'email_club_registration', 'test_message', $to, $language, $params, 'mike@koumbit.org', $send = TRUE );
+            drupal_mail( 'email_club_registration', 'email_pdf', $to, $language, $params, $from, $send = TRUE );
         }
         
         /**
@@ -38,36 +22,12 @@
         */
         function email_club_registration_mail( $key, &$message, $params ) {
             switch( $key ) {
-                case 'test_message':
+                case 'email_pdf':
                     // Set headers etc
                     $message['subject'] = t('Hello');
                     $message['body'][] = t('Hello @username,', array('@username' => $params['username']));
                     $message['body'][] = t('The main part of the message.');
                     break;
             }
-        }
-        
-        /**
-        * Implementation of hook_action_info()
-        */
-        function email_club_registration_action_info() {
-             //set-up parameters to define the action
-            $type = 'system';
-            $label = t( 'Show a test message' );
-            $configurable = false;
-            $triggers = array( 'node_view', 'node_insert', 'node_update', 'node_delete' );
-            
-            //define the actions to be included with this module
-            $actions = array(
-                'email_club_registration_message_action' => array(
-                    'type'          => $type,
-                    'label'         => $label,
-                    'configurable'  => $configurable,
-                    'triggers'      => $triggers
-                )
-            );
-            
-            //return the actions to drupal
-            return $actions;
         }
         
