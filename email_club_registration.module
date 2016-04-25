@@ -46,23 +46,23 @@
             $mailkey = 'email_pdf';
             
             //standard email parameters...to, from, subject etc
-            $sender = 'myke.dean@gmail.com';
-            $recipient = 'mike@koumbit.org';
+            $sender = 'mike@koumbit.org';
+            $recipients[] = 'mike@koumbit.org';
             $subject = t( 'CSU club registration form' );
-            $body = '';
+            $body = 'Your PDF is attached';
             
             //send in plaintext, without headers, and attach a PDF of the current node
-            $plaintext = true;
+            $plaintext = false;
             $headers = array();
-            $attachments = '';
+            $attachments = array();
             
             //make the body into text, and decode the HTML entities to regular UTF-8 bytes.
             $text = drupal_html_to_text( decode_entities( $body ) );
             
             //send directly
             $send = true;
-            
-            mimemail( $sender, $recipient, $subject, $body, $plaintext, $headers, $text, $attachments, $mailkey, $send );
+
+            mimemail( $sender, $recipients, $subject, $body, $plaintext, $headers, $text, $attachments );
         }
         
         
