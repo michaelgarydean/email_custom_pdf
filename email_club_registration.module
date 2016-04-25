@@ -1,7 +1,9 @@
         <?php
         
         /**
-        * Sends an email to the user
+        * Sends an email to the user.
+        * 
+        * This function was implemented to test outgoing emails from Drupal
         */
         function email_club_registration_email_action() {
             global $user;
@@ -14,9 +16,9 @@
                 
             );
             
+            //call the hook_mail function using the parameters provided to drupal_mail()
             drupal_mail( 'email_club_registration', 'email_pdf', $to, $language, $params, $from, $send = TRUE );
         }
-        
         /**
         * Implements hook_mail()
         */
@@ -30,4 +32,37 @@
                     break;
             }
         }
+        
+        /**
+        * Sends an email to the user using mimemail.
+        * 
+        * @todo add an interface for the user to put in what email to send it from
+        * @todo add an interface for the user to put in what email to send it to
+        * @todo add an interface for the user to put in the email subject
+        * @todo add an interface for the user to put in the email body
+        */
+        function email_club_registration_mimemail_action() {
+            //identify the email with a key
+            $mailkey = 'email_pdf';
+            
+            //standard email parameters...to, from, subject etc
+            $sender = 'myke.dean@gmail.com';
+            $recipient = 'mike@koumbit.org';
+            $subject = t( 'CSU club registration form' );
+            $body = '';
+            
+            //send in plaintext, without headers, and attach a PDF of the current node
+            $plaintext = true;
+            $headers = array();
+            $attachments = '';
+            
+            //make the body into text, and decode the HTML entities to regular UTF-8 bytes.
+            $text = drupal_html_to_text( decode_entities( $body ) );
+            
+            //send directly
+            $send = true;
+            
+            mimemail( $sender, $recipient, $subject, $body, $plaintext, $headers, $text, $attachments, $mailkey, $send );
+        }
+        
         
