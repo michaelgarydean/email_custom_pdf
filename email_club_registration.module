@@ -16,7 +16,7 @@
             );
             
             //call the hook_mail function using the parameters provided to drupal_mail()
-            drupal_mail( 'email_club_registration', 'attach_pdf_of_node', $to, $language, $params, $from );
+            drupal_mail( basename(__DIR__), 'attach_pdf_of_node', $to, $language, $params, $from );
         }
         /**
         * Implements hook_mail()
@@ -36,7 +36,10 @@
                     module_load_include('inc', 'print_pdf', 'print_pdf.pages');
                      
                      //get the current node ID
-                    $node_id = $node->nid;
+            
+                    if ( arg(0) == 'node' && is_numeric( arg(1) ) ) {
+                        $node_id = arg(1);
+                    }
                     
                     //generate the attachment details for the pdf
                     $attachments = array(
@@ -99,8 +102,6 @@
                 
             );
             
-            echo __DIR__;
-            
             //call the hook_mail function using the parameters provided to drupal_mail()
-            drupal_mail( __DIR__, 'email_pdf', $to, $language, $params, $from, $send = TRUE );
+            drupal_mail( basename(__FILE__), 'email_pdf', $to, $language, $params, $from, $send = TRUE );
          }
