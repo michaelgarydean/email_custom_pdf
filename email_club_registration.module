@@ -13,6 +13,7 @@
             $language = user_preferred_language($user);
             $params = array(
                 'username'      => $user->name,
+                'path'          => current_path()
             );
             
             //call the hook_mail function using the parameters provided to drupal_mail()
@@ -30,20 +31,13 @@
             switch( $key ) {
                 //generate a PDF of the current node and add it as an attachment
                 case 'attach_pdf_of_node':
-                    global $node;
                      
                     //load the print_pdf module for the print_pdf_generate_path to generate the pdf
                     module_load_include('inc', 'print_pdf', 'print_pdf.pages');
-                     
-                     //get the current node ID
-            
-                    if ( arg(0) == 'node' && is_numeric( arg(1) ) ) {
-                        $node_id = arg(1);
-                    }
                     
                     //generate the attachment details for the pdf
                     $attachments = array(
-                        'filecontent'   => print_pdf_generate_path($node_id),
+                        'filecontent'   => print_pdf_generate_path($params['path']),
                         'filemime'      => 'application/pdf',
                         'filename'      => 'club_registration_form'
                     );
