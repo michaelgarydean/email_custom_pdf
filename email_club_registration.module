@@ -13,23 +13,43 @@
             $language = user_preferred_language($user);
             $params = array(
                 'username'      => $user->name,
-                
             );
             
             //call the hook_mail function using the parameters provided to drupal_mail()
-            drupal_mail( 'email_club_registration', 'email_pdf', $to, $language, $params, $from, $send = TRUE );
+            drupal_mail( 'email_club_registration', 'attach_pdf_of_node', $to, $language, $params, $from );
         }
         /**
         * Implements hook_mail()
         */
         function email_club_registration_mail( $key, &$message, $params ) {
+            // Set headers etc for the email
+            $message['subject'] = t('Hello');
+            $message['body'][] = t('Hello @username,', array('@username' => $params['username']));
+            $message['body'][] = t('The main part of the message.');
+            
             switch( $key ) {
-                case 'email_pdf':
-                    // Set headers etc
-                    $message['subject'] = t('Hello');
-                    $message['body'][] = t('Hello @username,', array('@username' => $params['username']));
-                    $message['body'][] = t('The main part of the message.');
+                //generate a PDF of the current node and add it as an attachment
+                case 'attach_pdf_of_node':
+                    global $node;
+                     
+                    //load the print_pdf module for the print_pdf_generate_path to generate the pdf
+                    module_load_include('inc', 'print_pdf', 'print_pdf.pages');
+                     
+                     //get the current node ID
+                    $node_id = $node->nid;
+                    
+                    //generate the attachment details for the pdf
+                    $attachments = array(
+                        'filecontent'   => print_pdf_generate_path($node_id),
+                        'filemime'      => 'application/pdf',
+                        'filename'      => 'club_registration_form'
+                    );
                     break;
+            }
+            
+            //if there is an attachment that was passed or generated, add it to the message array
+            if( isset( $attachments ) ) {
+                $message['params']['attachments'][] = $attachments; 
             }
         }
         
@@ -65,4 +85,22 @@
             mimemail( $sender, $recipients, $subject, $body, $plaintext, $headers, $text, $attachments );
         }
         
-        
+        /**
+         * Creates a PDF of the current node and prepares it to be sent by email to the current user.
+         */
+         function email_club_registration_create_pdf_action() {
+            global $user;
+            
+            $from = 'mike@koumbit.org';
+            $to = $user->mail;
+            $language = user_preferred_language($user);
+            $params = array(
+                'username'      => $user->name,
+                
+            );
+            
+            echo __DIR__;
+            
+            //call the hook_mail function using the parameters provided to drupal_mail()
+            drupal_mail( __DIR__, 'email_pdf', $to, $language, $params, $from, $send = TRUE );
+         }

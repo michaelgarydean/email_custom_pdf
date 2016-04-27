@@ -6,3 +6,4 @@ files[] = email_club_registration.module
 files[] = email_club_registration.rules.inc
 dependencies[] = rules
 dependencies[] = mimemail
+dependencies[] = print

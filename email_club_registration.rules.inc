@@ -12,7 +12,7 @@
          
         //action definitions
         $actions = array(
-            'email_club_registration_mimemail_action'  => array(
+            'email_club_registration_email_action'  => array(
                 'label'     => $label,
                 'group'     => $group,
             )
