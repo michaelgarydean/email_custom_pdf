@@ -28,7 +28,7 @@ function email_club_registration_email_action() {
 /**
  * Implements hook_mail().
  */
-function email_club_registration_mail( $key, &$message, $params ) {
+function email_club_registration_mail($key, &$message, $params) {
   // Set headers etc for the email.
   $message['subject'] = t('Hello');
   $message['body'][] = t('Hello @username,', array('@username' => $params['username']));
@@ -51,7 +51,7 @@ function email_club_registration_mail( $key, &$message, $params ) {
   }
 
   // If there is an attachment that was passed or generated, add it to the message array.
-  if (isset($attachments )) {
+  if (isset($attachments)) {
     $message['params']['attachments'][] = $attachments;
   }
 }
@@ -102,5 +102,5 @@ function email_club_registration_create_pdf_action() {
   );
 
   // Call the hook_mail function using the parameters provided to drupal_mail().
-  drupal_mail( basename(__FILE__), 'email_pdf', $to, $language, $params, $from, $send = TRUE );
+  drupal_mail(basename(__FILE__), 'email_pdf', $to, $language, $params, $from, $send = TRUE);
 }
