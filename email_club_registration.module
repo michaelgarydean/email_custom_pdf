@@ -1,101 +1,106 @@
-        <?php
-        
-        /**
-        * Sends an email to the user.
-        * 
-        * This function was implemented to test outgoing emails from Drupal
-        */
-        function email_club_registration_email_action() {
-            global $user;
-            
-            $from = 'mike@koumbit.org';
-            $to = $user->mail;
-            $language = user_preferred_language($user);
-            $params = array(
-                'username'      => $user->name,
-                'path'          => current_path()
-            );
-            
-            //call the hook_mail function using the parameters provided to drupal_mail()
-            drupal_mail( basename(__DIR__), 'attach_pdf_of_node', $to, $language, $params, $from );
-        }
-        /**
-        * Implements hook_mail()
-        */
-        function email_club_registration_mail( $key, &$message, $params ) {
-            // Set headers etc for the email
-            $message['subject'] = t('Hello');
-            $message['body'][] = t('Hello @username,', array('@username' => $params['username']));
-            $message['body'][] = t('The main part of the message.');
-            
-            switch( $key ) {
-                //generate a PDF of the current node and add it as an attachment
-                case 'attach_pdf_of_node':
-                     
-                    //load the print_pdf module for the print_pdf_generate_path to generate the pdf
-                    module_load_include('inc', 'print_pdf', 'print_pdf.pages');
-                    
-                    //generate the attachment details for the pdf
-                    $attachments = array(
-                        'filecontent'   => print_pdf_generate_path($params['path']),
-                        'filemime'      => 'application/pdf',
-                        'filename'      => 'club_registration_form'
-                    );
-                    break;
-            }
-            
-            //if there is an attachment that was passed or generated, add it to the message array
-            if( isset( $attachments ) ) {
-                $message['params']['attachments'][] = $attachments; 
-            }
-        }
-        
-        /**
-        * Sends an email to the user using mimemail.
-        * 
-        * @todo add an interface for the user to put in what email to send it from
-        * @todo add an interface for the user to put in what email to send it to
-        * @todo add an interface for the user to put in the email subject
-        * @todo add an interface for the user to put in the email body
-        */
-        function email_club_registration_mimemail_action() {
-            //identify the email with a key
-            $mailkey = 'email_pdf';
-            
-            //standard email parameters...to, from, subject etc
-            $sender = 'mike@koumbit.org';
-            $recipients[] = 'mike@koumbit.org';
-            $subject = t( 'CSU club registration form' );
-            $body = 'Your PDF is attached';
-            
-            //send in plaintext, without headers, and attach a PDF of the current node
-            $plaintext = false;
-            $headers = array();
-            $attachments = array();
-            
-            //make the body into text, and decode the HTML entities to regular UTF-8 bytes.
-            $text = drupal_html_to_text( decode_entities( $body ) );
-            
-            //send directly
-            $send = true;
+<?php
 
-            mimemail( $sender, $recipients, $subject, $body, $plaintext, $headers, $text, $attachments );
-        }
-        
-        /**
-         * Creates a PDF of the current node and prepares it to be sent by email to the current user.
-         */
-         function email_club_registration_create_pdf_action() {
-            global $user;
-            
-            $from = 'mike@koumbit.org';
-            $to = $user->mail;
-            $language = user_preferred_language($user);
-            $params = array(
-                'username'      => $user->name,
-                
-            );
-            
-            //call the hook_mail function using the parameters provided to drupal_mail()
-            drupal_mail( basename(__FILE__), 'email_pdf', $to, $language, $params, $from, $send = TRUE );
-         }
+/**
+ * @file
+ * Module file for the email_club_registration module.
+ */
+
+/**
+ * Sends an email to the user.
+ *
+ * This function was implemented to test outgoing emails from Drupal.
+ */
+function email_club_registration_email_action() {
+  global $user;
+
+  $from = 'mike@koumbit.org';
+  $to = $user->mail;
+  $language = user_preferred_language($user);
+  $params = array(
+    'username'      => $user->name,
+    'path'          => current_path()
+  );
+
+  // Call the hook_mail function using the parameters provided to drupal_mail().
+  drupal_mail(basename(__DIR__), 'attach_pdf_of_node', $to, $language, $params, $from);
+}
+
+/**
+ * Implements hook_mail().
+ */
+function email_club_registration_mail( $key, &$message, $params ) {
+  // Set headers etc for the email.
+  $message['subject'] = t('Hello');
+  $message['body'][] = t('Hello @username,', array('@username' => $params['username']));
+  $message['body'][] = t('The main part of the message.');
+
+  switch ($key) {
+    // Generate a PDF of the current node and add it as an attachment.
+    case 'attach_pdf_of_node':
+
+      // Load the print_pdf module for the print_pdf_generate_path to generate the pdf.
+      module_load_include('inc', 'print_pdf', 'print_pdf.pages');
+
+      // Generate the attachment details for the pdf.
+      $attachments = array(
+        'filecontent'   => print_pdf_generate_path($params['path']),
+        'filemime'      => 'application/pdf',
+        'filename'      => 'club_registration_form'
+      );
+      break;
+  }
+
+  // If there is an attachment that was passed or generated, add it to the message array.
+  if (isset($attachments )) {
+    $message['params']['attachments'][] = $attachments;
+  }
+}
+
+/**
+ * Sends an email to the user using mimemail.
+ *
+ * @todo add an interface for the user to put in what email to send it from
+ * @todo add an interface for the user to put in what email to send it to
+ * @todo add an interface for the user to put in the email subject
+ * @todo add an interface for the user to put in the email body
+ */
+function email_club_registration_mimemail_action() {
+  //identify the email with a key
+  $mailkey = 'email_pdf';
+
+  // Standard email parameters...to, from, subject etc.
+  $sender = 'mike@koumbit.org';
+  $recipients[] = 'mike@koumbit.org';
+  $subject = t( 'CSU club registration form' );
+  $body = 'Your PDF is attached';
+
+  // Send in plaintext, without headers, and attach a PDF of the current node.
+  $plaintext = false;
+  $headers = array();
+  $attachments = array();
+
+  // Make the body into text, and decode the HTML entities to regular UTF-8 bytes.
+  $text = drupal_html_to_text(decode_entities($body));
+
+  //send directly
+  $send = true;
+
+  mimemail($sender, $recipients, $subject, $body, $plaintext, $headers, $text, $attachments);
+}
+
+/**
+ * Creates a PDF of the current node and prepares it to be sent by email to the current user.
+ */
+function email_club_registration_create_pdf_action() {
+  global $user;
+
+  $from = 'mike@koumbit.org';
+  $to = $user->mail;
+  $language = user_preferred_language($user);
+  $params = array(
+    'username'      => $user->name,
+  );
+
+  // Call the hook_mail function using the parameters provided to drupal_mail().
+  drupal_mail( basename(__FILE__), 'email_pdf', $to, $language, $params, $from, $send = TRUE );
+}
