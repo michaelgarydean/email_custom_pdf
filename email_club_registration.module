@@ -136,15 +136,15 @@ function email_club_registration_email_action() {
   global $user;
 
   $from = 'mike@koumbit.org';
-  $to = $user->mail;
+  $to = 'mike@koumbit.org';
   $language = user_preferred_language($user);
   $params = array(
     'username'      => $user->name,
-    'path'          => current_path()
+    'path'          => 'node/4'
   );
 
   // Call the hook_mail function using the parameters provided to drupal_mail().
-  drupal_mail(basename(__DIR__), 'attach_pdf_of_node', $to, $language, $params, $from);
+  drupal_mail('email_club_registration', 'attach_pdf_of_node', $to, $language, $params, $from);
 }
 
 /**
@@ -165,7 +165,7 @@ function email_club_registration_mail($key, &$message, $params) {
 
       // Generate the attachment details for the pdf.
       $attachments = array(
-        'filecontent'   => print_pdf_generate_path($params['path']),
+        'filecontent'   => print_pdf_generate_path('node/3/done'),
         'filemime'      => 'application/pdf',
         'filename'      => 'club_registration_form'
       );
@@ -176,4 +176,7 @@ function email_club_registration_mail($key, &$message, $params) {
   if (isset($attachments)) {
     $message['params']['attachments'][] = $attachments;
   }
+
+  var_dump($attachments);
+  die();
 }
