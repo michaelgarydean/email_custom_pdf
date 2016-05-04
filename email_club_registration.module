@@ -137,13 +137,7 @@ function email_club_registration_email_action() {
 
   $from = 'mike@koumbit.org';
   $to = 'mike@koumbit.org';
-  $language = user_preferred_language($user);
-  
-  $params = array(
-  'subject' => 'Test email',
-  'body' => 'test',
-  'attachment' => $attachment
-);
+  $language = user_preferred_language($user););
   
   $params = array(
     'headers'        => array('Content-Type' => 'text/html'),
