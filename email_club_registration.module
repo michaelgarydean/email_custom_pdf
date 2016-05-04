@@ -174,9 +174,6 @@ function email_club_registration_mail($key, &$message, $params) {
 
   // If there is an attachment that was passed or generated, add it to the message array.
   if (isset($attachments)) {
-    $message['params']['attachments'][] = $attachments;
+    $message['params']['attachment'][] = $attachments;
   }
-  
-  var_dump($attachments);
-  die();
 }
