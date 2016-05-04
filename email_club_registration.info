@@ -5,4 +5,5 @@ core = 7.x
 files[] = email_club_registration.rules.inc
 dependencies[] = rules
 dependencies[] = mimemail
+dependencies[] = mailsystem
 dependencies[] = print_pdf
