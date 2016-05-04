@@ -138,9 +138,19 @@ function email_club_registration_email_action() {
   $from = 'mike@koumbit.org';
   $to = 'mike@koumbit.org';
   $language = user_preferred_language($user);
+  
   $params = array(
-    'username'      => $user->name,
-    'path'          => 'node/3'
+  'subject' => 'Test email',
+  'body' => 'test',
+  'attachment' => $attachment
+);
+  
+  $params = array(
+    'headers'        => array('Content-Type' => 'text/html'),
+    'username'       => $user->name,
+    'subject'        => 'Concordia Student Union - Club Contract',
+    'body'           => 'Test body',
+    'path'           => 'node/3'
   );
 
   // Call the hook_mail function using the parameters provided to drupal_mail().
@@ -152,28 +162,27 @@ function email_club_registration_email_action() {
  */
 function email_club_registration_mail($key, &$message, $params) {
   // Set headers etc for the email.
-  $message['subject'] = t('Hello');
-  $message['body'][] = t('Hello @username,', array('@username' => $params['username']));
-  $message['body'][] = t('The main part of the message.');
+  $message['subject'] = $params['subject'];
+  $message['body'][] = $params['body'];
 
   switch ($key) {
     // Generate a PDF of the current node and add it as an attachment.
     case 'attach_pdf_of_node':
 
-      // Load the print_pdf module for the print_pdf_generate_path to generate the pdf.
+      // Load the print_pdf module for the print_pdf_generate_path in order to generate the pdf.
       module_load_include('inc', 'print_pdf', 'print_pdf.pages');
 
       // Generate the attachment details for the pdf.
-      $attachments = array(
+      $attachment = array(
         'filecontent'   => print_pdf_generate_html($params['path'], null),
         'filemime'      => 'application/pdf',
-        'filename'      => 'club_registration_form'
+        'filename'      => 'club_registration_form.pdf'
       );
       break;
   }
 
   // If there is an attachment that was passed or generated, add it to the message array.
-  if (isset($attachments)) {
-    $message['params']['attachment'] = $attachments;
+  if (isset($attachment)) {
+    $message['params']['attachments'][] = $attachment;
   }
 }
