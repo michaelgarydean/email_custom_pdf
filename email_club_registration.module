@@ -165,7 +165,7 @@ function email_club_registration_mail($key, &$message, $params) {
 
       // Generate the attachment details for the pdf.
       $attachments = array(
-        'filecontent'   => print_pdf_generate_path('node/3/done'),
+        'filecontent'   => pdf_using_mpdf_api('node/3'),
         'filemime'      => 'application/pdf',
         'filename'      => 'club_registration_form'
       );
