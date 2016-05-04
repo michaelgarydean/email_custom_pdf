@@ -163,9 +163,12 @@ function email_club_registration_mail($key, &$message, $params) {
       // Load the print_pdf module for the print_pdf_generate_path to generate the pdf.
       module_load_include('inc', 'print_pdf', 'print_pdf.pages');
 
+      echo drupal_get_path('module', basename(__FILE__));
+      die();
+
       // Generate the attachment details for the pdf.
       $attachments = array(
-        'filecontent'   => pdf_using_mpdf_api($params['path']),
+        'filecontent'   => print_pdf_generate_html($params['path'], null),
         'filemime'      => 'application/pdf',
         'filename'      => 'club_registration_form'
       );
