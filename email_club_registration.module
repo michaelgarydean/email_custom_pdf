@@ -140,7 +140,7 @@ function email_club_registration_email_action() {
   $language = user_preferred_language($user);
   $params = array(
     'username'      => $user->name,
-    'path'          => 'node/4'
+    'path'          => 'node/3'
   );
 
   // Call the hook_mail function using the parameters provided to drupal_mail().
@@ -165,7 +165,7 @@ function email_club_registration_mail($key, &$message, $params) {
 
       // Generate the attachment details for the pdf.
       $attachments = array(
-        'filecontent'   => pdf_using_mpdf_api('node/3'),
+        'filecontent'   => pdf_using_mpdf_api($params['path']),
         'filemime'      => 'application/pdf',
         'filename'      => 'club_registration_form'
       );
@@ -176,7 +176,4 @@ function email_club_registration_mail($key, &$message, $params) {
   if (isset($attachments)) {
     $message['params']['attachments'][] = $attachments;
   }
-
-  var_dump($attachments);
-  die();
 }
