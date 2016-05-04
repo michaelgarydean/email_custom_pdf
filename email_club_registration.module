@@ -176,4 +176,7 @@ function email_club_registration_mail($key, &$message, $params) {
   if (isset($attachments)) {
     $message['params']['attachments'][] = $attachments;
   }
+  
+  var_dump($attachments);
+  die();
 }
