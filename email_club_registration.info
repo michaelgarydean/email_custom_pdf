@@ -1,9 +1,0 @@
-name = Email Club Registration
-description = "Defines a set of custom rules for the Concordia Student Union"
-package = Koumbit
-core = 7.x
-files[] = email_club_registration.rules.inc
-dependencies[] = rules
-dependencies[] = mimemail
-dependencies[] = mailsystem
-dependencies[] = print_pdf

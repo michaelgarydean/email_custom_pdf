@@ -9,11 +9,11 @@
  * Implements hook_permission().
  */
 function email_club_registration_permission() {
-  $perms['administer email club registration settings'] = array(
-    'title' => t('Administer email club registration settings'),
-    'description' => t('Allows the user administer club registration settings, eg. approval cancellation dates and messages.'),
+  $permissions['Modify settings for sending CSU club contracts'] = array(
+    'title' => t('Modify settings to email CSU club contracts'),
+    'description' => t('Allows a user to modify the email message options used when sending out CSU club contracts')
   );
-  return $perms;
+  return $permissions;
 }
 
 /**
@@ -137,14 +137,13 @@ function email_club_registration_email_action() {
 
   $from = 'mike@koumbit.org';
   $to = 'mike@koumbit.org';
-  $language = user_preferred_language($user););
+  $language = user_preferred_language($user);
   
   $params = array(
     'headers'        => array('Content-Type' => 'text/html'),
     'username'       => $user->name,
     'subject'        => 'Concordia Student Union - Club Contract',
-    'body'           => 'Test body',
-    'path'           => 'node/3'
+    'body'           => 'Test body'
   );
 
   // Call the hook_mail function using the parameters provided to drupal_mail().
@@ -165,10 +164,13 @@ function email_club_registration_mail($key, &$message, $params) {
 
       // Load the print_pdf module for the print_pdf_generate_path in order to generate the pdf.
       module_load_include('inc', 'print_pdf', 'print_pdf.pages');
+      
+      // Generate HTML from a template file.
+      $html = '';
 
       // Generate the attachment details for the pdf.
       $attachment = array(
-        'filecontent'   => print_pdf_generate_html($params['path'], null),
+        'filecontent'   => print_pdf_generate_html($html, null),
         'filemime'      => 'application/pdf',
         'filename'      => 'club_registration_form.pdf'
       );

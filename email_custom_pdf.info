@@ -1,0 +1,11 @@
+name = "Email a PDF Using Rules"
+description = "Trigger the generation of a custom PDF and send it by email using the Rules module"
+core = 7.x
+package = Email a PDF Using Rules
+
+dependencies[] = rules
+dependencies[] = mimemail
+dependencies[] = mailsystem
+dependencies[] = print_pdf
+
+files[] = email_custom_pdf.rules.inc

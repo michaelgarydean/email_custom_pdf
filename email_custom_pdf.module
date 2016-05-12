@@ -1,0 +1,123 @@
+<?php
+
+/**
+ * @file
+ * Module file for the email_custom_pdf module.
+ */
+
+/**
+ * Sends an email to the user.
+ *
+ * This function was implemented to test outgoing emails from Drupal.
+ * 
+ * @todo Update the 'to' email address to the current user.
+ */
+function email_custom_pdf_email_action() {
+  global $user, $base_url;
+
+  /**
+   * Try to retrieve the FROM email address set on the configuration page
+   * 
+   * Use the site_mail address if it hasn't been set, or the email from Drupal UID 1
+   * as a last resort.
+   */
+  $default_from_address = variable_get('site_mail', user_load(1)->mail); 
+  $from = variable_get('email_custom_pdf_from_email', $default_from_address);
+
+  $to = 'mike@koumbit.org';
+  $language = user_preferred_language($user);
+  
+  /** 
+   * Set parameters for the email message.
+   * 
+   * The body text gets sanitized as plain text, or is an empty string if no value has been set.
+   * The subject is set to the site name if not set by the user, or as a last resort the site's URL.
+   */
+  $params = array(
+    'headers'        => array('Content-Type' => 'text/html'),
+    'username'       => $user->name,
+    'subject'        => check_plain(variable_get('email_custom_pdf_message_subject', variable_get('site_name', $base_url))),
+    'body'           => check_plain(variable_get('email_custom_pdf_message_body', ''))
+  );
+
+  // Call the hook_mail function using the parameters provided to drupal_mail().
+  drupal_mail('email_custom_pdf', 'attach_pdf_of_node', $to, $language, $params, $from);
+}
+
+/**
+ * Implements hook_mail().
+ */
+function email_custom_pdf_mail($key, &$message, $params) {
+  // Set headers etc for the email.
+  $message['subject'] = $params['subject'];
+  $message['body'][] = $params['body'];
+
+  switch ($key) {
+    // Generate a PDF of the current node and add it as an attachment.
+    case 'attach_pdf_of_node':
+
+      // Load the print_pdf module for the print_pdf_generate_path in order to generate the pdf.
+      module_load_include('inc', 'print_pdf', 'print_pdf.pages');
+      
+      // Generate HTML from a template file to be used as the PDF.
+      $html = '';
+
+      /**
+       * Generate the attachment details for the pdf.
+       * 
+       * The filename is set in the module configuration menu.
+       * 
+       * @see email_custom_pdf.admin.inc
+       */
+      
+      $attachment = array(
+        'filecontent'   => print_pdf_generate_html($html, null),
+        'filemime'      => 'application/pdf',
+        'filename'      => check_plain(variable_get('email_custom_pdf_filename', $base_url)) . '.pdf'
+      );
+      break;
+  }
+
+  // If there is an attachment that was passed or generated, add it to the message array.
+  if (isset($attachment)) {
+    $message['params']['attachments'][] = $attachment;
+  }
+}
+
+/**
+ * Implements hook_menu().
+ * 
+ * @see email_custom_pdf.admin.inc
+ * @uses email_custom_pdf_settings()
+ */
+function email_custom_pdf_menu() {
+  
+  // Define the URL and behavior for the configuration page.
+  $items['admin/config/workflow/email-custom-pdf'] = array(
+    'title'             => 'Email Custom PDF Settings',
+    'description'       => 'Configure the email settings and PDF generation options.',
+    'type'              => MENU_NORMAL_ITEM, 
+    
+    // The configuration form defined in email_custom_pdf_settings() 
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('email_custom_pdf_settings'),
+    'file'              => 'email_custom_pdf.admin.inc',
+    
+    // Permissions to access the module configuration are defined in hook_permission
+    'access arguments'  => array('access Email Custom PDF')
+  );
+  
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function email_custom_pdf_permission() {
+  return array(
+    'access Email Custom PDF' => array(
+      'title' => t('Access the Email Custom PDF settings'),
+      'description' => t('View the Email Custom PDF configuration settings'),
+    ),
+  );
+}

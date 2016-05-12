@@ -1,0 +1,3 @@
+- need to have mailsystem set to mimemail
+- explain template system
+- explain how to set up and configure
